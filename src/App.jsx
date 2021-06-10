@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React from "react";
 import "./App.css";
 import ImageEditor from "./components/ImageEditor/ImageEditor.jsx";
 import ReactTooltip from "react-tooltip";
