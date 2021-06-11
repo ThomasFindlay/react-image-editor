@@ -3,31 +3,31 @@
   justify-content: center;
 }
 
-.actionsBlock {
+.controlsBlock {
   margin-top: 2rem;
   display: flex;
   justify-content: center;
   column-gap: 1rem;
 }
 
-.actionsBlock svg {
+.controlsBlock svg {
   color: #6b7280;
   transition: 0.25s color;
   cursor: pointer;
 }
 
-.actionsBlock svg:hover {
+.controlsBlock svg:hover {
   color: #6d28d9;
 }
 
-.actionButton {
+.controlButton {
   background: transparent;
   border: none;
   display: flex;
   place-items: center;
 }
 
-.actionButton:focus {
+.controlButton:focus {
   outline-color: #6d28d9;
 }
 

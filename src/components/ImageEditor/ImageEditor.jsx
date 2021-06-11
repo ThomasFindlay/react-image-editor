@@ -1,24 +1,56 @@
 import React, { useState, useRef } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
+import styles from "./ImageEditor.module.css";
 import {
   BiRotateLeft,
   BiRotateRight,
   BiReset,
   BiDownload,
 } from "react-icons/bi";
-import styles from "./ImageEditor.module.css";
-import ActionButton from "./ActionButton.jsx";
+import ControlButton from "./ControlButton.jsx";
 import UploadImageButton from "./UploadImageButton.jsx";
-import { useEditorActions } from "./hooks/useEditorActions.js";
 
 function ImageEditor() {
+  const [scale, setScale] = useState(1);
   const cropperRef = useRef(null);
   const [imageSrc, setImageSrc] = useState(
     "https://raw.githubusercontent.com/roadmanfong/react-cropper/master/example/img/child.jpg"
   );
-  const { scale, onScale, onRotate, onReset, onDownload } =
-    useEditorActions(cropperRef);
+
+  const onRotate = direction => () => {
+    let angle = 0;
+    let angleConfig = {
+      left: -30,
+      right: 30,
+    };
+    angle = angleConfig[direction] ?? 0;
+    cropperRef.current.cropper.rotate(angle);
+  };
+
+  const onScale = e => {
+    const scaleValue = parseFloat(e.target.value);
+    setScale(scaleValue);
+    cropperRef.current.cropper.scale(scaleValue);
+  };
+
+  const onReset = () => {
+    const cropper = cropperRef.current.cropper;
+    cropper.reset();
+    setScale(1);
+  };
+
+  const onDownload = () => {
+    const data = cropperRef.current.cropper.getCroppedCanvas();
+    data.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "React Image Editor.jpg";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  };
 
   const onImageUpload = e => {
     const file = e.target.files?.[0];
@@ -32,6 +64,7 @@ function ImageEditor() {
 
     reader.readAsDataURL(file);
   };
+
   return (
     <div className={styles.imageEditor}>
       <div>
@@ -42,14 +75,13 @@ function ImageEditor() {
           guides={false}
           ref={cropperRef}
         />
-        <div className={styles.actionsBlock}>
-          <ActionButton tooltip="Rotate Left" onClick={onRotate("left")}>
+        <div className={styles.controlsBlock}>
+          <ControlButton tooltip="Rotate Left" onClick={onRotate("left")}>
             <BiRotateLeft size={30} />
-          </ActionButton>
-          <ActionButton tooltip="Rotate Right" onClick={onRotate("right")}>
+          </ControlButton>
+          <ControlButton tooltip="Rotate Right" onClick={onRotate("right")}>
             <BiRotateRight size={30} />
-          </ActionButton>
-
+          </ControlButton>
           <div className={styles.scaleFieldBlock}>
             <input
               type="range"
@@ -63,12 +95,12 @@ function ImageEditor() {
             />
             <label htmlFor="scale">Scale</label>
           </div>
-          <ActionButton tooltip="Reset" onClick={onReset}>
+          <ControlButton tooltip="Reset" onClick={onReset}>
             <BiReset size={30} />
-          </ActionButton>
-          <ActionButton tooltip="Download Image" onClick={onDownload}>
+          </ControlButton>
+          <ControlButton tooltip="Download Image" onClick={onDownload}>
             <BiDownload size={30} />
-          </ActionButton>
+          </ControlButton>
         </div>
         <UploadImageButton onImageUpload={onImageUpload} />
       </div>
